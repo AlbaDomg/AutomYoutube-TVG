@@ -169,11 +169,11 @@ This project significantly strengthened my experience in:
 
 ---
 
-## ⚠️ Note
+## ⚠️ IMPORTANT
 
-This repository contains a portfolio version of the project.
+> This project was developed for **Televisión de Galicia (TVG)**.
 
-Some implementation details and assets have been omitted to protect proprietary information developed for the client.
+> Sensitive credentials and environment variables have been excluded from this public repository.
 
 ---
 
