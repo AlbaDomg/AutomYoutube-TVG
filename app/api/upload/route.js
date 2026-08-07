@@ -36,12 +36,19 @@ async function handleInitiateUpload(request) {
   }
 
   const email = await getCurrentUserEmail(request);
-  const channel = await prisma.channel.findUnique({
+  let channel = await prisma.channel.findUnique({
     where: { userEmail: email }
   });
 
+  // Fallback: si el usuario actual no tiene un canal a su correo propio, utilizar el canal principal conectado (ej. TVG)
   if (!channel) {
-    return NextResponse.json({ error: 'No YouTube channel connected. Please authenticate first.' }, { status: 400 });
+    channel = await prisma.channel.findFirst({
+      where: { userEmail: 'rrss.crtvg@gmail.com' }
+    }) || await prisma.channel.findFirst();
+  }
+
+  if (!channel) {
+    return NextResponse.json({ error: 'No hay ningún canal de YouTube conectado. Conéctalo desde la barra superior.' }, { status: 400 });
   }
 
   const oauth2Client = await getOAuth2Client();
@@ -68,7 +75,7 @@ async function handleInitiateUpload(request) {
       console.log('[YouTube Resumable API] Access token refreshed.');
     } catch (refreshErr) {
       console.error('[YouTube Resumable API] Error refreshing access token:', refreshErr);
-      return NextResponse.json({ error: 'Failed to refresh YouTube access token' }, { status: 500 });
+      return NextResponse.json({ error: 'La sesión del canal de YouTube ha caducado. Vuelve a hacer clic en "Conectar Canal de YouTube".' }, { status: 401 });
     }
   }
 
