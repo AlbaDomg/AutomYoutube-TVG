@@ -459,8 +459,52 @@ export default function SubidorPage() {
     }
   };
 
+  // Helper para capturar un fotograma ligero del segundo 10 exclusivamente para la vista previa visual en la tarjeta
+  const extractPreviewFrame = (file) => {
+    return new Promise((resolve) => {
+      try {
+        const url = URL.createObjectURL(file);
+        const video = document.createElement("video");
+        video.src = url;
+        video.muted = true;
+        video.playsInline = true;
+
+        video.onloadedmetadata = () => {
+          // Ir al segundo 10, o al 20% de la duración si dura menos de 10s
+          const seekTime = video.duration >= 10 ? 10 : Math.max(0.5, video.duration * 0.2);
+          video.currentTime = seekTime;
+        };
+
+        video.onseeked = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = 480;
+            canvas.height = 270;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const base64 = canvas.toDataURL("image/jpeg", 0.6);
+              URL.revokeObjectURL(url);
+              resolve(base64);
+              return;
+            }
+          } catch (e) {}
+          URL.revokeObjectURL(url);
+          resolve(null);
+        };
+
+        video.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(null);
+        };
+      } catch (err) {
+        resolve(null);
+      }
+    });
+  };
+
   // Manejar cambio del input del archivo de vídeo (múltiple)
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
@@ -469,7 +513,7 @@ export default function SubidorPage() {
       file: file,
       title: file.name.replace(/\.[^/.]+$/, ""),
       description: "",
-      status: 'ready', // Listo inmediatamente sin extraer fotogramas
+      status: 'ready', // Listo inmediatamente sin esperar
       progress: 0,
       rawFrameBase64: null,
       hasMatched: false,
@@ -479,9 +523,18 @@ export default function SubidorPage() {
 
     setBatchFiles(prev => [...prev, ...newBatchItems]);
 
-    // Limpiar input
     if (e.target) {
       e.target.value = "";
+    }
+
+    // Capturar en segundo plano el fotograma del segundo 10 para mostrar la vista previa visual en la tarjeta
+    for (const item of newBatchItems) {
+      const frameBase64 = await extractPreviewFrame(item.file);
+      if (frameBase64) {
+        setBatchFiles(prev => prev.map(it => 
+          it.id === item.id ? { ...it, rawFrameBase64: frameBase64 } : it
+        ));
+      }
     }
   };
 
