@@ -6092,10 +6092,21 @@ export default function Dashboard() {
                 <div className={styles.inlineEditColLeft}>
                   <div className={styles.selectedVideoPreview}>
                     <img
-                      src={selectedYoutubeVideo.thumbnail || `/api/videos/thumbnail?id=${selectedYoutubeVideo.id}`}
+                      src={
+                        selectedYoutubeVideo.thumbnail || 
+                        (selectedYoutubeVideo.youtubeId || (selectedYoutubeVideo.id && selectedYoutubeVideo.id.length === 11)
+                          ? `/api/youtube/thumbnail-proxy?url=${encodeURIComponent(`https://img.youtube.com/vi/${selectedYoutubeVideo.youtubeId || selectedYoutubeVideo.id}/hqdefault.jpg`)}`
+                          : `/api/videos/thumbnail?id=${selectedYoutubeVideo.id}`)
+                      }
                       onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%2364748b'>Sin Portada</text></svg>";
+                        const ytId = selectedYoutubeVideo.youtubeId || (selectedYoutubeVideo.id && selectedYoutubeVideo.id.length === 11 ? selectedYoutubeVideo.id : null);
+                        if (ytId && !e.target.dataset.triedFallback) {
+                          e.target.dataset.triedFallback = "true";
+                          e.target.src = `/api/youtube/thumbnail-proxy?url=${encodeURIComponent(`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`)}`;
+                        } else {
+                          e.target.onerror = null;
+                          e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%2364748b'>Procesando</text></svg>";
+                        }
                       }}
                       alt="Preview"
                       className={styles.selectedVideoThumbnail}
