@@ -469,7 +469,7 @@ export default function SubidorPage() {
       file: file,
       title: file.name.replace(/\.[^/.]+$/, ""),
       description: "",
-      status: 'pending', // pending, extracting, ready, uploading, completed, failed
+      status: 'ready', // Listo inmediatamente sin extraer fotogramas
       progress: 0,
       rawFrameBase64: null,
       hasMatched: false,
@@ -580,8 +580,6 @@ export default function SubidorPage() {
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type || "video/mp4",
-        rawFrameBase64: item.rawFrameBase64,
-        extractedFrames: item.extractedFrames || [],
         scheduledAt: item.scheduledAt ? toUTCISOString(item.scheduledAt) : null
       })
     });
@@ -716,7 +714,7 @@ export default function SubidorPage() {
       } catch (err) {
         console.error(`Error al subir ${item.file.name}:`, err);
         setBatchFiles(prev => prev.map(it => 
-          it.id === item.id ? { ...it, status: 'failed' } : it
+          it.id === item.id ? { ...it, status: 'failed', errorMessage: err.message } : it
         ));
       }
     }
@@ -1409,8 +1407,8 @@ export default function SubidorPage() {
                                 </span>
                               )}
                               {item.status === 'failed' && (
-                                <span style={{ fontSize: "0.68rem", fontWeight: "700", color: "#ef4444", background: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239,68,68,0.25)", padding: "2px 8px", borderRadius: "6px" }}>
-                                  ❌ Error al subir
+                                <span style={{ fontSize: "0.68rem", fontWeight: "700", color: "#ef4444", background: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239,68,68,0.25)", padding: "2px 8px", borderRadius: "6px" }} title={item.errorMessage || ''}>
+                                  ❌ Error al subir {item.errorMessage ? `: ${item.errorMessage}` : ''}
                                 </span>
                               )}
                             </div>
