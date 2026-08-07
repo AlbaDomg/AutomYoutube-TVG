@@ -2522,18 +2522,15 @@ export default function Dashboard() {
       });
     }
 
-    // Actualizar el estado en BD a EDITING para informar a otros usuarios
+    // Actualizar el estado en BD a EDITING para informar a otros usuarios (en segundo plano sin bloquear el renderizado)
     if (video.status === "LOCAL_DRAFT") {
-      try {
-        await fetch(`/api/videos?id=${video.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "EDITING" })
-        });
-        fetchScheduledUpdates();
-      } catch (err) {
+      fetch(`/api/videos?id=${video.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "EDITING" })
+      }).then(() => fetchScheduledUpdates()).catch(err => {
         console.error("Error setting video status to EDITING:", err);
-      }
+      });
     }
 
     // Cargar el vídeo en el elemento oculto para permitir el ajuste manual del fotograma si es necesario
