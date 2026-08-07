@@ -3,5 +3,11 @@
     "app/api/upload/chunk/route.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/keep-alive",
+      "schedule": "0 0 */3 * *"
+    }
+  ]
 }
