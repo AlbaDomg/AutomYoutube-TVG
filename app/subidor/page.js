@@ -1510,7 +1510,7 @@ export default function SubidorPage() {
                                   borderRadius: "8px",
                                   padding: "0.4rem 0.6rem",
                                   fontSize: "0.8rem",
-                                  color: "#f8fafc",
+                                  color: "var(--text-primary)",
                                   width: "100%"
                                 }}
                               />
@@ -1532,7 +1532,7 @@ export default function SubidorPage() {
                                   borderRadius: "8px",
                                   padding: "0.4rem 0.6rem",
                                   fontSize: "0.8rem",
-                                  color: "#f8fafc",
+                                  color: "var(--text-primary)",
                                   width: "100%",
                                   resize: "vertical",
                                   fontFamily: "inherit"
