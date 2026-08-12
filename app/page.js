@@ -448,18 +448,29 @@ export default function LandingPortalPage() {
           marginBottom: "3rem"
         }}>
           {/* Card Subidor */}
-          <div
-            className={styles.landingCard}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#a855f7";
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(168, 85, 247, 0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-color)";
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+          <div style={{
+            background: "rgba(30, 41, 59, 0.4)",
+            border: "1px solid var(--border-color)",
+            borderRadius: "20px",
+            padding: "2.5rem 2rem",
+            textAlign: "center",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.3s ease",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "#a855f7";
+            e.currentTarget.style.transform = "translateY(-4px)";
+            e.currentTarget.style.boxShadow = "0 10px 30px rgba(168, 85, 247, 0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-color)";
+            e.currentTarget.style.transform = "none";
+            e.currentTarget.style.boxShadow = "none";
+          }}
           >
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{
@@ -475,10 +486,10 @@ export default function LandingPortalPage() {
               }}>
                 📤
               </div>
-              <h2 className={styles.landingCardTitle}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#f8fafc", margin: "0 0 1rem 0" }}>
                 Flujo Subidor
               </h2>
-              <p className={styles.landingCardDesc}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
                 Accede a la interfaz simplificada para subir archivos de vídeo locales directamente al servidor y optimizar sus títulos y descripciones preliminares con ayuda de la IA.
               </p>
             </div>
@@ -504,18 +515,29 @@ export default function LandingPortalPage() {
           </div>
 
           {/* Card Editor */}
-          <div
-            className={styles.landingCard}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#0ea5e9";
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(14, 165, 233, 0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-color)";
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+          <div style={{
+            background: "rgba(30, 41, 59, 0.4)",
+            border: "1px solid var(--border-color)",
+            borderRadius: "20px",
+            padding: "2.5rem 2rem",
+            textAlign: "center",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.3s ease",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "#0ea5e9";
+            e.currentTarget.style.transform = "translateY(-4px)";
+            e.currentTarget.style.boxShadow = "0 10px 30px rgba(14, 165, 233, 0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-color)";
+            e.currentTarget.style.transform = "none";
+            e.currentTarget.style.boxShadow = "none";
+          }}
           >
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{
@@ -531,10 +553,10 @@ export default function LandingPortalPage() {
               }}>
                 🎬
               </div>
-              <h2 className={styles.landingCardTitle}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#f8fafc", margin: "0 0 1rem 0" }}>
                 Flujo Editor
               </h2>
-              <p className={styles.landingCardDesc}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
                 Accede al panel avanzado de edición. Compón miniaturas estilo TVG con captura automática de fotogramas, procesa documentos PDF en lote, asigna logotipos del catálogo y programa publicaciones en YouTube.
               </p>
             </div>
