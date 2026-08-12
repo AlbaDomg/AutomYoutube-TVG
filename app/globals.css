@@ -90,6 +90,18 @@ body {
   background: #f8fafc;
 }
 
+/* Adaptación exclusiva de contenedores en Modo Claro (sin afectar el Modo Oscuro) */
+[data-theme="light"] div[style*="background: #0d1220"],
+[data-theme="light"] div[style*="background: #0f172a"],
+[data-theme="light"] div[style*="background: #1e293b"],
+[data-theme="light"] div[style*="background: rgba(15, 20, 32"],
+[data-theme="light"] div[style*="background: rgba(30, 41, 59"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
 /* Scrollbar styles */
 ::-webkit-scrollbar {
   width: 8px;
