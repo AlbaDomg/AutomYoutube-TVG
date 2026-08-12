@@ -1997,17 +1997,16 @@ export default function Dashboard() {
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleManualRefresh = async () => {
+  const handleHistoryRefresh = async () => {
     setIsRefreshing(true);
     try {
       await Promise.all([
         fetchTasks(true),
         fetchScheduledUpdates(),
-        fetchChannelInfo(),
-        fetchPrivateVideos()
+        fetchChannelInfo()
       ]);
     } catch (err) {
-      console.error("Error al refrescar datos:", err);
+      console.error("Error al refrescar historial de publicaciones:", err);
     } finally {
       setTimeout(() => setIsRefreshing(false), 500);
     }
@@ -5631,50 +5630,9 @@ export default function Dashboard() {
                     <h3 style={{ fontSize: "1rem", fontWeight: "700", color: "#f8fafc", margin: 0 }}>Borradores · Pendientes de edición</h3>
                     <p style={{ fontSize: "0.71rem", color: "var(--text-muted)", margin: "0.15rem 0 0 0" }}>Borradores privados y vídeos ocultos en YouTube esperando que los completes y publiques.</p>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
-                    <button
-                      type="button"
-                      onClick={handleManualRefresh}
-                      disabled={isRefreshing}
-                      title="Refrescar borradores"
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "50%",
-                        background: "rgba(255, 255, 255, 0.07)",
-                        border: "1px solid var(--border-color)",
-                        color: "var(--text-primary)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: isRefreshing ? "wait" : "pointer",
-                        fontSize: "0.95rem",
-                        transition: "all 0.2s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "var(--primary)";
-                        e.currentTarget.style.background = "rgba(139, 92, 246, 0.2)";
-                        e.currentTarget.style.transform = "scale(1.08)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "var(--border-color)";
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
-                        e.currentTarget.style.transform = "scale(1)";
-                      }}
-                    >
-                      <span style={{
-                        display: "inline-block",
-                        lineHeight: 1,
-                        transition: "transform 0.5s ease",
-                        transform: isRefreshing ? "rotate(360deg)" : "none"
-                      }}>
-                        🔄
-                      </span>
-                    </button>
-                    <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", padding: "3px 12px", borderRadius: "20px", whiteSpace: "nowrap" }}>
-                      {pendingPrivateVideos.length} borrador{pendingPrivateVideos.length !== 1 ? "es" : ""}
-                    </span>
-                  </div>
+                  <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", padding: "3px 12px", borderRadius: "20px", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {pendingPrivateVideos.length} borrador{pendingPrivateVideos.length !== 1 ? "es" : ""}
+                  </span>
                 </div>
                 {pendingPrivateVideos.length === 0 ? (
                   <div className={styles.emptyState}>No hay borradores pendientes. Cuando el subidor suba un vídeo aparecerá aquí.</div>
@@ -7196,7 +7154,7 @@ export default function Dashboard() {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
                   <button
                     type="button"
-                    onClick={handleManualRefresh}
+                    onClick={handleHistoryRefresh}
                     disabled={isRefreshing}
                     title="Refrescar historial de publicaciones"
                     style={{
