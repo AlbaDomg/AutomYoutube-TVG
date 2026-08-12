@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Navbar({ userEmail, userRole }) {
   const pathname = usePathname();
   const [theme, setTheme] = useState("dark");
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("app_theme") || "dark";
@@ -14,11 +16,21 @@ export default function Navbar({ userEmail, userRole }) {
     document.documentElement.setAttribute("data-theme", savedTheme);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsThemeDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectTheme = (newTheme) => {
     setTheme(newTheme);
     localStorage.setItem("app_theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
+    setIsThemeDropdownOpen(false);
   };
 
   // Helper to translate roles into human readable tags and colors
@@ -107,7 +119,7 @@ export default function Navbar({ userEmail, userRole }) {
           </span>
         </div>
 
-        {/* Navigation, Theme Toggle & Logout */}
+        {/* Navigation, Theme Selector Dropdown & Logout */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -171,33 +183,115 @@ export default function Navbar({ userEmail, userRole }) {
           {/* Vertical Divider */}
           <div style={{ width: "1px", height: "16px", backgroundColor: theme === "light" ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.12)" }} />
 
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            title={theme === "dark" ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
-            style={{
-              background: theme === "light" ? "rgba(124, 58, 237, 0.08)" : "rgba(255, 255, 255, 0.05)",
-              border: theme === "light" ? "1px solid rgba(124, 58, 237, 0.25)" : "1px solid rgba(255, 255, 255, 0.1)",
-              color: theme === "light" ? "#6d28d9" : "#fbbf24",
-              padding: "0.35rem 0.75rem",
-              borderRadius: "10px",
-              fontSize: "0.8rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            {theme === "dark" ? "☀️ Claro" : "🌙 Oscuro"}
-          </button>
+          {/* Theme Dropdown Menu */}
+          <div ref={dropdownRef} style={{ position: "relative" }}>
+            <button
+              type="button"
+              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+              title="Cambiar tema de interfaz"
+              style={{
+                background: theme === "light" ? "rgba(124, 58, 237, 0.08)" : "rgba(255, 255, 255, 0.05)",
+                border: theme === "light" ? "1px solid rgba(124, 58, 237, 0.25)" : "1px solid rgba(255, 255, 255, 0.1)",
+                color: theme === "light" ? "#6d28d9" : "#fbbf24",
+                padding: "0.35rem 0.75rem",
+                borderRadius: "10px",
+                fontSize: "0.8rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.03)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              <span>{theme === "light" ? "☀️ Claro" : "🌙 Oscuro"}</span>
+              <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>▾</span>
+            </button>
+
+            {isThemeDropdownOpen && (
+              <div style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                right: 0,
+                background: theme === "light" ? "#ffffff" : "#0f172a",
+                border: theme === "light" ? "1px solid rgba(0, 0, 0, 0.1)" : "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "12px",
+                padding: "0.4rem",
+                boxShadow: theme === "light" ? "0 10px 25px -5px rgba(0,0,0,0.15)" : "0 10px 25px -5px rgba(0,0,0,0.5)",
+                minWidth: "150px",
+                zIndex: 1050,
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.2rem"
+              }}>
+                <button
+                  type="button"
+                  onClick={() => selectTheme("light")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "0.5rem 0.75rem",
+                    background: theme === "light" ? "rgba(124, 58, 237, 0.1)" : "transparent",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: theme === "light" ? "#7c3aed" : "#94a3b8",
+                    fontSize: "0.8rem",
+                    fontWeight: theme === "light" ? "700" : "500",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "all 0.15s"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (theme !== "light") e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (theme !== "light") e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  <span>☀️ Modo Claro</span>
+                  {theme === "light" && <span style={{ color: "#7c3aed", fontWeight: "bold" }}>✓</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => selectTheme("dark")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "0.5rem 0.75rem",
+                    background: theme === "dark" ? "rgba(139, 92, 246, 0.15)" : "transparent",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: theme === "dark" ? "#a855f7" : "#475569",
+                    fontSize: "0.8rem",
+                    fontWeight: theme === "dark" ? "700" : "500",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "all 0.15s"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (theme !== "dark") e.currentTarget.style.background = "rgba(0,0,0,0.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (theme !== "dark") e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  <span>🌙 Modo Oscuro</span>
+                  {theme === "dark" && <span style={{ color: "#a855f7", fontWeight: "bold" }}>✓</span>}
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Logout Button */}
           <button

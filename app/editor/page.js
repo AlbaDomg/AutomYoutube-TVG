@@ -405,6 +405,17 @@ export default function Dashboard() {
     };
   }, [videoObjectURL]);
 
+  // Detector de clics externos para cerrar el menú desplegable de vinculación manual de vídeos en borradores
+  useEffect(() => {
+    const handleClickOutsideCardSearch = (e) => {
+      if (!e.target.closest("[data-card-search-container]")) {
+        setCardSearchResults({});
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutsideCardSearch);
+    return () => document.removeEventListener("mousedown", handleClickOutsideCardSearch);
+  }, []);
+
   const handleVideoLoadedMetadata = () => {
     if (hiddenVideoRef.current) {
       const duration = hiddenVideoRef.current.duration;
@@ -5794,13 +5805,16 @@ export default function Dashboard() {
 
                           {/* Fila inferior: Buscador manual */}
                           {dbVid && (!dbVid.youtubeId || showSearchForCard[dbVid.id]) && (
-                            <div style={{
-                              marginTop: "0.5rem",
-                              borderTop: "1px dashed rgba(255,255,255,0.08)",
-                              paddingTop: "0.5rem",
-                              width: "100%",
-                              position: "relative"
-                            }}>
+                            <div
+                              data-card-search-container="true"
+                              style={{
+                                marginTop: "0.5rem",
+                                borderTop: "1px dashed var(--border-color, rgba(255,255,255,0.08))",
+                                paddingTop: "0.5rem",
+                                width: "100%",
+                                position: "relative"
+                              }}
+                            >
                               <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.25rem" }}>
                                 { !dbVid.youtubeId 
                                   ? "⚠️ Este borrador no está vinculado a YouTube. Vincula un vídeo:" 
@@ -5817,7 +5831,7 @@ export default function Dashboard() {
                                     padding: "0.35rem 0.5rem",
                                     fontSize: "0.75rem",
                                     background: "var(--bg-surface-solid, #1e293b)",
-                                    color: "#fff",
+                                    color: "var(--text-primary)",
                                     border: "1px solid var(--border-color, #334155)",
                                     borderRadius: "6px"
                                   }}
@@ -5845,14 +5859,14 @@ export default function Dashboard() {
                                 <div style={{
                                   position: "absolute",
                                   zIndex: 100,
-                                  background: "#0f172a",
-                                  border: "1px solid #334155",
+                                  background: "var(--bg-surface-solid, #0f172a)",
+                                  border: "1px solid var(--border-color, #334155)",
                                   borderRadius: "6px",
                                   marginTop: "2px",
                                   maxHeight: "180px",
                                   overflowY: "auto",
                                   width: "100%",
-                                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)"
+                                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.4)"
                                 }}>
                                   {cardSearchResults[dbVid.id].map(res => (
                                     <div
@@ -5861,13 +5875,13 @@ export default function Dashboard() {
                                       style={{
                                         padding: "0.4rem 0.6rem",
                                         cursor: "pointer",
-                                        borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                        borderBottom: "1px solid var(--border-color, rgba(255,255,255,0.05))",
                                         fontSize: "0.72rem",
                                         display: "flex",
                                         alignItems: "center",
                                         gap: "0.5rem"
                                       }}
-                                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"}
+                                      onMouseEnter={(e) => e.currentTarget.style.background = "var(--border-color, rgba(255, 255, 255, 0.05))"}
                                       onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                                     >
                                       {res.thumbnail && (
@@ -5881,10 +5895,10 @@ export default function Dashboard() {
                                         />
                                       )}
                                       <div style={{ minWidth: 0, flex: 1 }}>
-                                        <div style={{ color: "#fff", fontWeight: "600", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                                        <div style={{ color: "var(--text-primary)", fontWeight: "600", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
                                           {res.title}
                                         </div>
-                                        <div style={{ color: "#94a3b8", fontSize: "0.65rem" }}>
+                                        <div style={{ color: "var(--text-secondary)", fontSize: "0.65rem" }}>
                                           ID: {res.id} · {res.privacyStatus === 'public' ? 'Público' : res.privacyStatus === 'unlisted' ? 'Oculto' : 'Privado'}
                                         </div>
                                       </div>
