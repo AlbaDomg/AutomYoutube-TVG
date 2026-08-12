@@ -87,8 +87,7 @@ body {
 }
 
 [data-theme="light"] body {
-  background: radial-gradient(circle at 50% 0%, #ede9fe 0%, var(--bg-base) 75%);
-  background-attachment: fixed;
+  background: #f8fafc;
 }
 
 /* Scrollbar styles */
