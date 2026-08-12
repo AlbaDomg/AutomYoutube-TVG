@@ -1,10 +1,25 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Navbar({ userEmail, userRole }) {
   const pathname = usePathname();
+  const [theme, setTheme] = useState("dark");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("app_theme") || "dark";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("app_theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
 
   // Helper to translate roles into human readable tags and colors
   const getRoleDetails = (role) => {
@@ -29,10 +44,10 @@ export default function Navbar({ userEmail, userRole }) {
   return (
     <nav style={{
       width: "100%",
-      background: "rgba(15, 23, 42, 0.55)",
+      background: theme === "light" ? "rgba(255, 255, 255, 0.85)" : "rgba(15, 23, 42, 0.55)",
       backdropFilter: "blur(16px)",
       WebkitBackdropFilter: "blur(16px)",
-      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+      borderBottom: theme === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.08)",
       padding: "0.85rem 2rem",
       display: "flex",
       alignItems: "center",
@@ -40,7 +55,8 @@ export default function Navbar({ userEmail, userRole }) {
       position: "sticky",
       top: 0,
       zIndex: 1000,
-      fontFamily: "system-ui, -apple-system, sans-serif"
+      fontFamily: "system-ui, -apple-system, sans-serif",
+      transition: "background 0.3s ease, border-color 0.3s ease"
     }}>
       {/* Brand Logo */}
       <Link href="/" style={{
@@ -65,12 +81,12 @@ export default function Navbar({ userEmail, userRole }) {
         display: "flex",
         alignItems: "center",
         gap: "0.75rem",
-        background: "rgba(255, 255, 255, 0.02)",
+        background: theme === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.02)",
         padding: "0.35rem 0.85rem",
         borderRadius: "20px",
-        border: "1px solid rgba(255, 255, 255, 0.05)"
+        border: theme === "light" ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.05)"
       }}>
-        <span style={{ fontSize: "0.8rem", color: "#e2e8f0", fontWeight: "500" }}>{userEmail}</span>
+        <span style={{ fontSize: "0.8rem", color: theme === "light" ? "#334155" : "#e2e8f0", fontWeight: "500" }}>{userEmail}</span>
         <span style={{
           fontSize: "0.7rem",
           fontWeight: "700",
@@ -86,7 +102,7 @@ export default function Navbar({ userEmail, userRole }) {
         </span>
       </div>
 
-      {/* Navigation & Logout */}
+      {/* Navigation, Theme Toggle & Logout */}
       <div style={{
         display: "flex",
         alignItems: "center",
@@ -97,7 +113,7 @@ export default function Navbar({ userEmail, userRole }) {
           {userRole === "ADMIN" && (
             <>
               <Link href="/" style={{
-                color: pathname === "/" ? "#a855f7" : "#94a3b8",
+                color: pathname === "/" ? "#a855f7" : (theme === "light" ? "#64748b" : "#94a3b8"),
                 textDecoration: "none",
                 fontSize: "0.82rem",
                 fontWeight: "600",
@@ -106,7 +122,7 @@ export default function Navbar({ userEmail, userRole }) {
                 Inicio
               </Link>
               <Link href="/subidor" style={{
-                color: pathname === "/subidor" ? "#a855f7" : "#94a3b8",
+                color: pathname === "/subidor" ? "#a855f7" : (theme === "light" ? "#64748b" : "#94a3b8"),
                 textDecoration: "none",
                 fontSize: "0.82rem",
                 fontWeight: "600",
@@ -115,7 +131,7 @@ export default function Navbar({ userEmail, userRole }) {
                 Subidor
               </Link>
               <Link href="/editor" style={{
-                color: pathname === "/editor" ? "#a855f7" : "#94a3b8",
+                color: pathname === "/editor" ? "#a855f7" : (theme === "light" ? "#64748b" : "#94a3b8"),
                 textDecoration: "none",
                 fontSize: "0.82rem",
                 fontWeight: "600",
@@ -148,7 +164,35 @@ export default function Navbar({ userEmail, userRole }) {
         </div>
 
         {/* Vertical Divider */}
-        <div style={{ width: "1px", height: "16px", backgroundColor: "rgba(255,255,255,0.12)" }} />
+        <div style={{ width: "1px", height: "16px", backgroundColor: theme === "light" ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.12)" }} />
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          title={theme === "dark" ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+          style={{
+            background: theme === "light" ? "rgba(124, 58, 237, 0.08)" : "rgba(255, 255, 255, 0.05)",
+            border: theme === "light" ? "1px solid rgba(124, 58, 237, 0.25)" : "1px solid rgba(255, 255, 255, 0.1)",
+            color: theme === "light" ? "#6d28d9" : "#fbbf24",
+            padding: "0.35rem 0.75rem",
+            borderRadius: "10px",
+            fontSize: "0.8rem",
+            fontWeight: "600",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.35rem",
+            transition: "all 0.2s"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.03)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
+          {theme === "dark" ? "☀️ Claro" : "🌙 Oscuro"}
+        </button>
 
         {/* Logout Button */}
         <button
