@@ -313,6 +313,42 @@ export default function Dashboard() {
   const [cardSearchResults, setCardSearchResults] = useState({}); // { [dbId]: results }
   const [cardSearchLoading, setCardSearchLoading] = useState({}); // { [dbId]: loading }
   const [showSearchForCard, setShowSearchForCard] = useState({}); // { [dbId]: boolean }
+  const cardSearchDebounceTimers = useRef({});
+
+  // Buscar vídeos en YouTube (incluyendo públicos) desde una tarjeta con debounce de 300ms
+  const handleCardVideoSearch = (cardId, query) => {
+    setCardSearchQueries(prev => ({ ...prev, [cardId]: query }));
+
+    // Cancelar temporizador previo de esta tarjeta si existe
+    if (cardSearchDebounceTimers.current[cardId]) {
+      clearTimeout(cardSearchDebounceTimers.current[cardId]);
+    }
+
+    if (!query || query.trim().length < 2) {
+      setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
+      setCardSearchLoading(prev => ({ ...prev, [cardId]: false }));
+      return;
+    }
+
+    setCardSearchLoading(prev => ({ ...prev, [cardId]: true }));
+
+    cardSearchDebounceTimers.current[cardId] = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/youtube/videos?q=${encodeURIComponent(query)}&includePublic=true`);
+        if (res.ok) {
+          const data = await res.json();
+          setCardSearchResults(prev => ({ ...prev, [cardId]: data }));
+        } else {
+          setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
+        }
+      } catch (err) {
+        console.error("[handleCardVideoSearch] Error:", err);
+        setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
+      } finally {
+        setCardSearchLoading(prev => ({ ...prev, [cardId]: false }));
+      }
+    }, 300);
+  };
 
   // Estados para búsqueda de videos en lote y filtrado de playlists
   const [batchVideoSearch, setBatchVideoSearch] = useState({}); // { [index]: { query, results, loading } }
@@ -3482,30 +3518,6 @@ export default function Dashboard() {
     }
   };
 
-  // Buscar vídeos en YouTube (incluyendo públicos) desde una tarjeta de la cola de borradores
-  const handleCardVideoSearch = async (cardId, query) => {
-    setCardSearchQueries(prev => ({ ...prev, [cardId]: query }));
-    if (!query || query.trim().length < 2) {
-      setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
-      return;
-    }
-    setCardSearchLoading(prev => ({ ...prev, [cardId]: true }));
-    try {
-      const res = await fetch(`/api/youtube/videos?q=${encodeURIComponent(query)}&includePublic=true`);
-      if (res.ok) {
-        const data = await res.json();
-        setCardSearchResults(prev => ({ ...prev, [cardId]: data }));
-      } else {
-        setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
-      }
-    } catch (err) {
-      console.error("[handleCardVideoSearch] Error:", err);
-      setCardSearchResults(prev => ({ ...prev, [cardId]: [] }));
-    } finally {
-      setCardSearchLoading(prev => ({ ...prev, [cardId]: false }));
-    }
-  };
-
   // Vincular borrador local a vídeo de YouTube
   const handleLinkCardToYoutube = async (cardDbId, youtubeVideoId, ytVideoTitle, ytVideoThumbnail) => {
     try {
@@ -5868,42 +5880,50 @@ export default function Dashboard() {
                                   width: "100%",
                                   boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.4)"
                                 }}>
-                                  {cardSearchResults[dbVid.id].map(res => (
-                                    <div
-                                      key={res.id}
-                                      onClick={() => handleLinkCardToYoutube(dbVid.id, res.id, res.title, res.thumbnail)}
-                                      style={{
-                                        padding: "0.4rem 0.6rem",
-                                        cursor: "pointer",
-                                        borderBottom: "1px solid var(--border-color, rgba(255,255,255,0.05))",
-                                        fontSize: "0.72rem",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "0.5rem"
-                                      }}
-                                      onMouseEnter={(e) => e.currentTarget.style.background = "var(--border-color, rgba(255, 255, 255, 0.05))"}
-                                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                                    >
-                                      {res.thumbnail && (
-                                        <img
-                                          src={res.thumbnail}
-                                          alt=""
-                                          onError={(e) => {
-                                            e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%2364748b'>Sin Portada</text></svg>";
-                                          }}
-                                          style={{ width: "32px", aspectRatio: "16/9", objectFit: "cover", borderRadius: "3px" }}
-                                        />
-                                      )}
-                                      <div style={{ minWidth: 0, flex: 1 }}>
-                                        <div style={{ color: "var(--text-primary)", fontWeight: "600", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-                                          {res.title}
-                                        </div>
-                                        <div style={{ color: "var(--text-secondary)", fontSize: "0.65rem" }}>
-                                          ID: {res.id} · {res.privacyStatus === 'public' ? 'Público' : res.privacyStatus === 'unlisted' ? 'Oculto' : 'Privado'}
+                                  {cardSearchResults[dbVid.id].map(res => {
+                                    const isAlreadyLinked = dbVideos.some(v => v.youtubeId === res.id);
+                                    return (
+                                      <div
+                                        key={res.id}
+                                        onClick={() => handleLinkCardToYoutube(dbVid.id, res.id, res.title, res.thumbnail)}
+                                        style={{
+                                          padding: "0.4rem 0.6rem",
+                                          cursor: "pointer",
+                                          borderBottom: "1px solid var(--border-color, rgba(255,255,255,0.05))",
+                                          fontSize: "0.72rem",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: "0.5rem"
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--border-color, rgba(255, 255, 255, 0.05))"}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                                      >
+                                        {res.thumbnail && (
+                                          <img
+                                            src={res.thumbnail}
+                                            alt=""
+                                            onError={(e) => {
+                                              e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%2364748b'>Sin Portada</text></svg>";
+                                            }}
+                                            style={{ width: "32px", aspectRatio: "16/9", objectFit: "cover", borderRadius: "3px" }}
+                                          />
+                                        )}
+                                        <div style={{ minWidth: 0, flex: 1 }}>
+                                          <div style={{ color: "var(--text-primary)", fontWeight: "600", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                                            {res.title}
+                                          </div>
+                                          <div style={{ color: "var(--text-secondary)", fontSize: "0.65rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                                            <span>ID: {res.id} · {res.privacyStatus === 'public' ? 'Público' : res.privacyStatus === 'unlisted' ? 'Oculto' : 'Privado'}</span>
+                                            {isAlreadyLinked ? (
+                                              <span style={{ color: "#f59e0b", fontWeight: "bold", background: "rgba(245, 158, 11, 0.15)", padding: "1px 5px", borderRadius: "4px" }}>🔗 Ya en uso</span>
+                                            ) : (
+                                              <span style={{ color: "#10b981", fontWeight: "bold", background: "rgba(16, 185, 129, 0.15)", padding: "1px 5px", borderRadius: "4px" }}>✓ Libre</span>
+                                            )}
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </div>
                               )}
                               {cardSearchLoading[dbVid.id] && (
