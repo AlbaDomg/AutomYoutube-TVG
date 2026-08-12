@@ -210,7 +210,7 @@ export default function Navbar({ userEmail, userRole }) {
                 e.currentTarget.style.transform = "scale(1)";
               }}
             >
-              <span>{theme === "light" ? "☀️ Claro" : "🌙 Oscuro"}</span>
+              <span>🌓 Modo</span>
               <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>▾</span>
             </button>
 
