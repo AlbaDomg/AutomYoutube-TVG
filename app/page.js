@@ -449,11 +449,12 @@ export default function LandingPortalPage() {
         }}>
           {/* Card Subidor */}
           <div style={{
-            background: "rgba(30, 41, 59, 0.4)",
+            background: "var(--bg-surface-solid, #1e293b)",
             border: "1px solid var(--border-color)",
             borderRadius: "20px",
             padding: "2.5rem 2rem",
             textAlign: "center",
+            boxShadow: "var(--shadow-md)",
             backdropFilter: "blur(10px)",
             transition: "all 0.3s ease",
             display: "flex",
@@ -469,7 +470,7 @@ export default function LandingPortalPage() {
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "var(--border-color)";
             e.currentTarget.style.transform = "none";
-            e.currentTarget.style.boxShadow = "none";
+            e.currentTarget.style.boxShadow = "var(--shadow-md)";
           }}
           >
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -486,10 +487,10 @@ export default function LandingPortalPage() {
               }}>
                 📤
               </div>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#f8fafc", margin: "0 0 1rem 0" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: "0 0 1rem 0" }}>
                 Flujo Subidor
               </h2>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
                 Accede a la interfaz simplificada para subir archivos de vídeo locales directamente al servidor y optimizar sus títulos y descripciones preliminares con ayuda de la IA.
               </p>
             </div>
@@ -516,11 +517,12 @@ export default function LandingPortalPage() {
 
           {/* Card Editor */}
           <div style={{
-            background: "rgba(30, 41, 59, 0.4)",
+            background: "var(--bg-surface-solid, #1e293b)",
             border: "1px solid var(--border-color)",
             borderRadius: "20px",
             padding: "2.5rem 2rem",
             textAlign: "center",
+            boxShadow: "var(--shadow-md)",
             backdropFilter: "blur(10px)",
             transition: "all 0.3s ease",
             display: "flex",
@@ -536,7 +538,7 @@ export default function LandingPortalPage() {
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "var(--border-color)";
             e.currentTarget.style.transform = "none";
-            e.currentTarget.style.boxShadow = "none";
+            e.currentTarget.style.boxShadow = "var(--shadow-md)";
           }}
           >
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -553,10 +555,10 @@ export default function LandingPortalPage() {
               }}>
                 🎬
               </div>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#f8fafc", margin: "0 0 1rem 0" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: "0 0 1rem 0" }}>
                 Flujo Editor
               </h2>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", lineHeight: "1.6", marginBottom: "2rem" }}>
                 Accede al panel avanzado de edición. Compón miniaturas estilo TVG con captura automática de fotogramas, procesa documentos PDF en lote, asigna logotipos del catálogo y programa publicaciones en YouTube.
               </p>
             </div>

@@ -293,7 +293,7 @@
 }
 
 .inputGroup input, .inputGroup textarea, .inputGroup select {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-surface-solid, rgba(0, 0, 0, 0.2));
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   border-radius: 8px;
