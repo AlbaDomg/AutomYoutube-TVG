@@ -2003,7 +2003,8 @@ export default function Dashboard() {
       await Promise.all([
         fetchTasks(true),
         fetchScheduledUpdates(),
-        fetchChannelInfo()
+        fetchChannelInfo(),
+        fetchPrivateVideos()
       ]);
     } catch (err) {
       console.error("Error al refrescar datos:", err);
