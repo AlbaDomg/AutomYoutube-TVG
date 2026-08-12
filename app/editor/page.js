@@ -5635,38 +5635,40 @@ export default function Dashboard() {
                       type="button"
                       onClick={handleManualRefresh}
                       disabled={isRefreshing}
-                      title="Refrescar lista de vídeos"
+                      title="Refrescar borradores"
                       style={{
-                        background: "rgba(255, 255, 255, 0.05)",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        background: "rgba(255, 255, 255, 0.07)",
                         border: "1px solid var(--border-color)",
                         color: "var(--text-primary)",
-                        borderRadius: "20px",
-                        padding: "3px 10px",
-                        fontSize: "0.72rem",
-                        fontWeight: "600",
-                        cursor: isRefreshing ? "wait" : "pointer",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.3rem",
+                        justifyContent: "center",
+                        cursor: isRefreshing ? "wait" : "pointer",
+                        fontSize: "0.95rem",
                         transition: "all 0.2s ease"
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = "var(--primary)";
-                        e.currentTarget.style.background = "rgba(139, 92, 246, 0.15)";
+                        e.currentTarget.style.background = "rgba(139, 92, 246, 0.2)";
+                        e.currentTarget.style.transform = "scale(1.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.borderColor = "var(--border-color)";
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
+                        e.currentTarget.style.transform = "scale(1)";
                       }}
                     >
                       <span style={{
                         display: "inline-block",
+                        lineHeight: 1,
                         transition: "transform 0.5s ease",
                         transform: isRefreshing ? "rotate(360deg)" : "none"
                       }}>
                         🔄
                       </span>
-                      <span>{isRefreshing ? "Refrescando..." : "Refrescar"}</span>
                     </button>
                     <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", padding: "3px 12px", borderRadius: "20px", whiteSpace: "nowrap" }}>
                       {pendingPrivateVideos.length} borrador{pendingPrivateVideos.length !== 1 ? "es" : ""}
@@ -7197,36 +7199,38 @@ export default function Dashboard() {
                     disabled={isRefreshing}
                     title="Refrescar historial de publicaciones"
                     style={{
-                      background: "rgba(255, 255, 255, 0.05)",
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      background: "rgba(255, 255, 255, 0.07)",
                       border: "1px solid var(--border-color)",
                       color: "var(--text-primary)",
-                      borderRadius: "20px",
-                      padding: "3px 10px",
-                      fontSize: "0.72rem",
-                      fontWeight: "600",
-                      cursor: isRefreshing ? "wait" : "pointer",
                       display: "flex",
                       alignItems: "center",
-                      gap: "0.3rem",
+                      justifyContent: "center",
+                      cursor: isRefreshing ? "wait" : "pointer",
+                      fontSize: "0.95rem",
                       transition: "all 0.2s ease"
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = "#34d399";
-                      e.currentTarget.style.background = "rgba(52, 211, 153, 0.15)";
+                      e.currentTarget.style.background = "rgba(52, 211, 153, 0.2)";
+                      e.currentTarget.style.transform = "scale(1.08)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = "var(--border-color)";
-                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
+                      e.currentTarget.style.transform = "scale(1)";
                     }}
                   >
                     <span style={{
                       display: "inline-block",
+                      lineHeight: 1,
                       transition: "transform 0.5s ease",
                       transform: isRefreshing ? "rotate(360deg)" : "none"
                     }}>
                       🔄
                     </span>
-                    <span>{isRefreshing ? "Refrescando..." : "Refrescar"}</span>
                   </button>
                   <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "#34d399", background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.25)", padding: "3px 12px", borderRadius: "20px", whiteSpace: "nowrap" }}>
                     {mergedCompletedItems.length} publicado{mergedCompletedItems.length !== 1 ? "s" : ""}
