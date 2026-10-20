@@ -143,16 +143,12 @@ function updateTitleSuffix(title, programName, emoji = "") {
   let cleanTitle = (title || "").trim();
   
   // 1. Quitar emoji del principio del título si existe (de forma repetitiva para limpiar cualquier emoji acumulado)
-  const emojiPrefixRegex = /^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s*/u;
-  while (emojiPrefixRegex.test(cleanTitle)) {
-    cleanTitle = cleanTitle.replace(emojiPrefixRegex, "").trim();
-  }
+  const emojiPrefixRegex = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\uFE0F|\u200D|\s)+\s*/u;
+  cleanTitle = cleanTitle.replace(emojiPrefixRegex, "").trim();
 
   // 2. Quitar emoji del final del título si existe
-  const endingEmojiRegex = /\s*([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s*$/u;
-  while (endingEmojiRegex.test(cleanTitle)) {
-    cleanTitle = cleanTitle.replace(endingEmojiRegex, "").trim();
-  }
+  const endingEmojiRegex = /\s*(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\uFE0F|\u200D|\s)+$/u;
+  cleanTitle = cleanTitle.replace(endingEmojiRegex, "").trim();
 
   // 3. Quitar el sufijo de programa si existe
   const suffixRegex = /\s*\|.*$/;
@@ -2254,9 +2250,9 @@ export default function Dashboard() {
 
     // Detectar si el título ya tiene un emoji guardado al principio
     let extractedEmoji = "";
-    const emojiMatch = item.title.match(/^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/u);
+    const emojiMatch = item.title.match(/^(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
     if (emojiMatch) {
-      extractedEmoji = emojiMatch[1];
+      extractedEmoji = emojiMatch[0];
     }
     const logoName = item.selectedProgramLogo || 'none';
 
@@ -2401,9 +2397,9 @@ export default function Dashboard() {
     // Detectar si el título ya tiene un emoji guardado al principio
     let extractedEmoji = "";
     const titleToCheck = dbVideo?.title || video.title || "";
-    const emojiMatch = titleToCheck.match(/^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/u);
+    const emojiMatch = titleToCheck.match(/^(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
     if (emojiMatch) {
-      extractedEmoji = emojiMatch[1];
+      extractedEmoji = emojiMatch[0];
     }
 
     // Generar el título y descripción iniciales
@@ -2553,9 +2549,9 @@ export default function Dashboard() {
     // Detectar si el título ya tiene un emoji guardado al principio
     let extractedEmoji = "";
     const rawTitle = video.title || "";
-    const emojiMatch = rawTitle.match(/^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/u);
+    const emojiMatch = rawTitle.match(/^(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
     if (emojiMatch) {
-      extractedEmoji = emojiMatch[1];
+      extractedEmoji = emojiMatch[0];
     }
 
     const updatedTitle = updateTitleSuffix(rawTitle, detectedLogo, extractedEmoji);
@@ -2739,7 +2735,7 @@ export default function Dashboard() {
     let textToOptimize = text;
     if (field === 'title') {
       // 1. Extraer el emoji del inicio
-      const emojiMatch = text.match(/^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s*/u);
+      const emojiMatch = text.match(/^(\p{Extended_Pictographic}|\p{Emoji_Presentation})\s*/u);
       if (emojiMatch) {
         emojiPrefix = emojiMatch[0]; // Ej.: "🚨 "
         textToOptimize = text.substring(emojiPrefix.length).trim();
@@ -3058,9 +3054,9 @@ export default function Dashboard() {
         let extractedEmoji = "";
         const taskTitle = task.title || video.title || "";
         const taskDesc = task.description || video.description || "";
-        const emojiMatch = taskTitle.match(/^([\u2600-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/u);
+        const emojiMatch = taskTitle.match(/^(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
         if (emojiMatch) {
-          extractedEmoji = emojiMatch[1];
+          extractedEmoji = emojiMatch[0];
         }
 
         setUpdateForm({
